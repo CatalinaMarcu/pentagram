@@ -17,6 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
     def create(self,validated_data):
         user = User.objects.create(**validated_data)
         user.set_password(validated_data["password"])
+        user.save()
         return user
 
 class CommentSerializer(serializers.ModelSerializer):
@@ -26,13 +27,3 @@ class CommentSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         comment=Comment.objects.create(**validated_data)
         return comment
-
-# class CommentSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = Comment
-#         fields = ('id', 'user', 'photo', 'comment')
-#
-#     def create(self, validated_data):
-#         comment = Comment.objects.create(**validated_data)
-#         return comment
-
