@@ -22,6 +22,7 @@ def users(request):
 
 
 @api_view(['GET', 'POST'])
+@permission_classes((AllowAny,))
 def photos(request):
     if request.method == "GET":
         photos = Photo.objects.all()
@@ -34,6 +35,7 @@ def photos(request):
             return Response(status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST,data=photo_serializer.errors)
 @api_view(['GET', 'POST'])
+@permission_classes((AllowAny,))
 def comments(request, id_photo):
     if request.method == 'GET':
         comments = Comment.objects.filter(photo_id=id_photo)
@@ -63,6 +65,7 @@ def comments(request, id_photo):
 #             return Response(status=status.HTTP_201_CREATED)
 
 @api_view(['GET', 'POST'])
+@permission_classes((AllowAny,))
 def like(request, id_photo):
     if request.method == 'GET':
         counter = Like.objects.filter(photo_id=id_photo).count()

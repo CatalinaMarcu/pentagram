@@ -32028,7 +32028,7 @@ var App = React.createClass({displayName: "App",
 
 module.exports = App;
 
-},{"./common/header":199,"jquery":2,"react":196,"react-router":27}],199:[function(require,module,exports){
+},{"./common/header":200,"jquery":2,"react":196,"react-router":27}],199:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -32041,9 +32041,11 @@ var Header = React.createClass({displayName: "Header",
         React.createElement("nav", {className: "navbar navbar-default"}, 
           React.createElement("div", {className: "container-fluid"}, 
               React.createElement("ul", {className: "nav navbar-nav"}, 
-                React.createElement("li", null, React.createElement(Link, {to: "app"}, "Home")), 
-                React.createElement("li", null, React.createElement(Link, {to: "about"}, "About"))
-              )
+               React.createElement("li", null, React.createElement("img", {src: 'images/jira1.jpg', alt: "logo", className: "img-responsive"})), 
+               React.createElement("li", null, React.createElement("h1", null, "Pentagram"))
+                   
+                 
+               )
           )
         )
 		);
@@ -32053,40 +32055,193 @@ var Header = React.createClass({displayName: "Header",
 module.exports = Header;
 },{"react":196,"react-router":27}],200:[function(require,module,exports){
 "use strict";
+
+var React = require('react');
+var Router = require('react-router');
+var Link = Router.Link;
+
+var Header = React.createClass({displayName: "Header",
+	render: function() {
+		return (
+        React.createElement("nav", {className: "navbar navbar-default"}, 
+          React.createElement("div", {className: "container-fluid"}, 
+              React.createElement("ul", {className: "nav navbar-nav"}, 
+               React.createElement("li", null, React.createElement("img", {src: 'images/jira1.jpg', alt: "logo", className: "img-responsive"})), 
+               React.createElement("li", null, React.createElement("h1", null, "Pentagram"))
+                   
+                 
+               )
+          )
+        )
+		);
+	}
+});
+
+module.exports = Header;
+},{"react":196,"react-router":27}],201:[function(require,module,exports){
+/**
+ * Created by Catalina Marcu on 7/28/2016.
+ */
+"use strict";
+
+var React = require('react');
+var Router = require('react-router');
+var Link = Router.Link;
+var Header = require('./common/Header');
+
+var feed = React.createClass({displayName: "feed",
+	getInitialState: function(){
+         document.body.style.background = "url('') no-repeat fixed center";
+			return {
+				images: [
+
+				]
+			};
+		}
+	, componentWillMount: function() {
+        var self = this;
+        $.ajax({
+            url: 'http://127.0.0.1:8000/api/v1/photos/',
+                headers: {
+                "Authorization": sessionStorage.authToken
+            }
+            , type: 'GET'
+            , error: function(xhr, textStatus, errorThrown) {
+
+            }
+        }).then(function(data) {
+            self.setState({images: data});
+        });
+    }
+	, onCommentHandler: function (event) {
+        var photoID = event.target.dataset.id;
+        Router.HashLocation.push('photo/' + photoID);
+        // console.log('Comment button was pressed!');
+    }
+    , likebutton: function (event) {
+        $('.like').click(function () {
+            var obj = $(this);
+            if (obj.data('liked')) {
+                obj.data('liked', false);
+                obj.html('<span class="large material-icons nolike">nothumb_up</span>');
+            }
+            else {
+                obj.data('liked', true);
+                obj.html('<span class="large material-icons liked">thumb_up</span>');
+            }
+        });
+    }   
+
+	, render: function() {
+        var self = this;
+        return (
+            React.createElement("div", null, 
+                React.createElement(Header, null), 
+            React.createElement("div", {className: "containerfeed"}, 
+                React.createElement("div", {className: "logofeed"}
+
+                ), 
+                this.state.images.map(function (item, index) {
+                    return (
+                        React.createElement("div", {className: "containerpost col-md-6 image-frame", key: item.id}, 
+
+                             React.createElement("a", {href: '#/photo/' + item.id}, 
+                             React.createElement("img", {src: 'http://127.0.0.1:8000' + item.photo, id: 'image-' + item.id, "data-id": item.id, width: "100%", height: "100%"})
+                             ), 
+
+                            React.createElement("div", {className: "footer-toolbar-image"}), 
+                            React.createElement("div", {className: "all-icons"}, 
+                            React.createElement("a", {className: "like", role: "button"}, 
+                                React.createElement("span", {className: "large material-icons nolike", onClick: self.likebutton}, "thumb_up"), item[2])
+                            ), 
+
+                            React.createElement("div", {className: "well comment-panel"}, 
+                                React.createElement("input", {type: "text", className: "comment-input", "aria-label": "Add a comment…", placeholder: "Add a comment…"})
+
+                            )
+                        )
+                    );
+                }), 
+               React.createElement("button", {className: "butonfeed"}, "Click to add photos")
+
+            )
+            )
+                );
+    }
+});
+module.exports = feed;
+
+},{"./common/Header":199,"react":196,"react-router":27}],202:[function(require,module,exports){
+"use strict";
 var React = require('react');
 var Router = require('react-router');
 var RegisterForm = require('./registerForm');
 var Link = Router.Link;
 
 var loginForm = React.createClass({displayName: "loginForm",
-        render: function(){
-            return (
-                React.createElement("form", null, 
-                    React.createElement("div", {className: "col-md-3 "}), 
-                    React.createElement("div", {className: "col-md-3 "}, 
-                    React.createElement("img", {src: 'images/imagine.png', alt: "imagine", className: "img-responsive"})
-                    ), 
-                    React.createElement("div", {className: "col-md-6 text-left loginform"}, 
-                    React.createElement("img", {src: 'images/logo.png', alt: "logo", className: "img-responsive"}), 
-                    React.createElement("input", {type: "text", placeholder: "Username"}), 
-                    React.createElement("br", null), 
-                    React.createElement("input", {type: "password", placeholder: "Password"}), 
-                    React.createElement("br", null), 
-                    React.createElement("input", {type: "submit", value: "Login"}), 
-                    React.createElement("h4", null, "Don't have an account? ", React.createElement(Link, {to: "register"}, "Sign up"), " ")
-                    )
-                )
-
-
-
-            );
+       getInitialState: function() {
+          return {
+            username: null
+            , password: null
+          };
+        }
+        , userChangeHandler: function(event) {
+            this.setState({username: event.target.value});
         }
 
-});
+        , passwordChangeHandler: function(event) {
+            this.setState({password: event.target.value});
+        }
 
+       , formSubmitHandler: function(event) {
+            event.preventDefault();
+            console.log(this.state);
+           $.ajax({
+			url: 'http://127.0.0.1:8000/api/v1/login/'
+			, type: 'POST'
+			, data: this.state
+			// , error: function(response) {
+			// 	console.log(response.responseText.JSON);
+			// }
+			, error: function(xhr, textStatus, errorThrown) {
+					var json = JSON.parse(xhr.responseText);
+					for (var prop in json) {
+						alert(prop + "  " + json[prop]);
+					}
+			}
+		}).then(function(data) {
+			sessionStorage.setItem('authToken', data.token);
+			Router.HashLocation.push('feed');
+		});
+	}
+    , render: function () {
+        return (
+            React.createElement("div", {className: "containerbody"}, 
+                React.createElement("div", {className: "contentlogin maincontent"}, 
+                    React.createElement("form", null, 
+                        React.createElement("fieldset", null, 
+                            React.createElement("div", {className: "col-md-1 "}), 
+                            React.createElement("div", {className: "col-md-3 "}
+                            ), 
+                            React.createElement("div", {className: "col-md-6 text-left loginform"}, 
+                                React.createElement("h1", null, "Pentagram"), 
+                                React.createElement("input", {type: "text", name: "username", placeholder: "Username", 
+                                       onChange: this.userChangeHandler}), " ", React.createElement("br", null), 
+                                React.createElement("input", {type: "password", name: "password", placeholder: "Password", 
+                                       onChange: this.passwordChangeHandler}), React.createElement("br", null), 
+                                React.createElement("button", {name: "submit", onClick: this.formSubmitHandler}, "Login"), 
+                                React.createElement("h4", null, "Don't have an account? ", React.createElement(Link, {to: "register"}, "Sign up"))
+                            )
+                        )
+                    )
+                )
+            )
+        );
+    }
+});
 module.exports = loginForm;
 
-},{"./registerForm":203,"react":196,"react-router":27}],201:[function(require,module,exports){
+},{"./registerForm":206,"react":196,"react-router":27}],203:[function(require,module,exports){
 "use strict";
  
 var React = require('react');
@@ -32105,7 +32260,172 @@ var loginPage = React.createClass({displayName: "loginPage",
  
 module.exports = loginPage;
 
-},{"./loginForm":200,"./registerForm":203,"react":196,"react-router":27}],202:[function(require,module,exports){
+},{"./loginForm":202,"./registerForm":206,"react":196,"react-router":27}],204:[function(require,module,exports){
+/**
+ * Created by Catalina Marcu on 8/3/2016.
+ */
+"use strict";
+
+var React = require('react');
+var Router = require('react-router');
+var Link = Router.Link;
+
+var feed = React.createClass({displayName: "feed",
+	getInitialState: function(){
+			return {
+				imageLoaded: false,
+				image: '',
+				comments: [],
+				likes: '',
+				loggedUsername: ''
+			};
+	}
+
+	, componentWillMount: function() {
+		var self = this;
+		$.ajax({
+			url: 'http://127.0.0.1:8000/api/v1/photos/'
+			, type: 'GET'
+			, error: function(xhr, textStatus, errorThrown) {
+
+			}
+		}).then(function(data) {
+			function findPhoto(img) {
+				return img.id === parseInt(self.props.params.photo_id);
+			}
+            self.setState({imageLoaded: true});
+			self.setState({image: data.find(findPhoto)});
+
+			$.ajax({
+			url: 'http://127.0.0.1:8000/api/photos/' + self.state.image.id + '/comments/'
+			, type: 'GET'
+			, error: function(xhr, textStatus, errorThrown) {
+			}
+			}).then(function(commentData) {
+				self.setState({comments: commentData});
+			});
+
+			$.ajax({
+			url: 'http://127.0.0.1:8000/api/photos/' + self.state.image.id + '/likes/'
+			, type: 'GET'
+			, error: function(xhr, textStatus, errorThrown) {
+			}
+			}).then(function(likesData) {
+				self.setState({likes: likesData});
+			});
+
+			$.ajax({
+			url: 'http://127.0.0.1:8000/api/v1/users/'
+			, type: 'GET'
+			, error: function(xhr, textStatus, errorThrown) {
+
+			}
+			}).then(function(userData) {
+				function findUser(usr) {
+					return usr.id === parseInt(sessionStorage.getItem('user_id'));
+				}
+
+				//search user by specific ID in list resulted from ajax for user
+				function findUserByID(userID){
+					for(var i = 0; i <= userData.length; i++){
+						if(userData[i].id === userID) {
+							return userData[i].username;
+						}
+					}
+				}
+
+				var user = userData.find(findUser);
+				if(user != null) {self.setState({loggedUsername: user.username}); }
+
+				var newCommentObj = self.state.comments;
+				self.state.comments.map(function (item, index) {
+					var userID = item.user;
+					newCommentObj[index] = {comment: item.comment, user: findUserByID(userID)};
+				});
+					self.setState({comments: newCommentObj});
+
+				});
+
+			if(sessionStorage.getItem('photoPageReloaded') == null) {
+						sessionStorage.setItem('photoPageReloaded', true);
+						window.location.reload();
+					}
+		});
+	}
+
+	, onCommentHandler: function(event) {
+		event.preventDefault();
+
+		//var id = event.target.id;
+		var self = this;
+
+		var params = {comment: $('#commentContent').val(), photo: self.state.image.id, user: sessionStorage.getItem('user_id')};
+		$.ajax({
+			url: 'http://127.0.0.1:8000/api/photos/' + self.state.image.id + '/comments/'
+			, type: 'POST'
+			, data: params
+			, error: function(xhr, textStatus, errorThrown) {
+
+			}
+		}).then(function(data) {
+			window.location.reload();
+		});
+	}
+	, onLikeHandler: function(event) {
+		event.preventDefault();
+		
+		var self = this;
+		var token = sessionStorage.getItem('authToken');
+		var params = {photo: self.state.image.id, user: sessionStorage.getItem('user_id')};
+		$.ajax({
+			beforeSend: function(xhr){
+				xhr.setRequestHeader('Authorization', 'Token ' + token);
+			}
+			, url: 'http://127.0.0.1:8000/api/photos/' + self.state.image.id + '/likes/'
+			, type: 'POST'
+			, data: params
+			, error: function(xhr, textStatus, errorThrown) {
+
+			}
+		}).then(function(data) {
+			window.location.reload();
+		});
+	}
+	, render: function() {
+		var self = this;
+		//debugger;
+		return (
+			React.createElement("div", null, 
+				sessionStorage.getItem('authToken') != null ? React.createElement("span", {className: "userLogedLabel"}, " ", self.state.loggedUsername) : '', 
+			React.createElement("div", {className: "container"}, 
+				React.createElement("div", {className: "row"}, 
+					React.createElement("div", {className: "col-md-5"}, 
+						React.createElement("img", {className: "img-rounded photo-img", src: 'http://127.0.0.1:8000' + self.state.image.photo, width: "100%"}), 
+						React.createElement("span", {className: "like-icon glyphicon glyphicon-thumbs-up", onClick: self.onLikeHandler}), React.createElement("span", {className: "like-label"}, self.state.likes)
+					), 
+					React.createElement("div", {className: "col-md-7 well"}, 
+						React.createElement("h1", null, "Comments"), 
+						self.state.comments.map(function (item) {
+							return (
+							React.createElement("div", null, 
+								React.createElement("h5", null, React.createElement("b", null, item.user, " said: "), React.createElement("i", null, item.comment))
+							)
+							);
+						}), 
+						self.state.comments.length === 0 ? React.createElement("div", null, "No comments") : '', 
+
+						sessionStorage.getItem('authToken') != null ? React.createElement("textarea", {placeholder: "add comment", className: "form-control", id: "commentContent"}) : '', 
+						sessionStorage.getItem('authToken') != null ? React.createElement("button", {className: "btn btn-default col-sm-offset-3 col-sm-9", name: "submit", onClick: self.onCommentHandler}, "Add") : ''
+					)
+
+				)
+			)
+				));
+	}
+});
+
+module.exports = feed;
+},{"react":196,"react-router":27}],205:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -32125,7 +32445,7 @@ var NotFoundPage = React.createClass({displayName: "NotFoundPage",
 
 module.exports = NotFoundPage;
 
-},{"react":196,"react-router":27}],203:[function(require,module,exports){
+},{"react":196,"react-router":27}],206:[function(require,module,exports){
 /**
  * Created by Catalina Marcu on 7/25/2016.
  */
@@ -32135,34 +32455,73 @@ var Router = require('react-router');
 var Link = Router.Link;
 
 var registerForm = React.createClass({displayName: "registerForm",
-        render: function(){
-            return (
-                React.createElement("form", null, 
-                    React.createElement("div", {className: "col-md-3 "}), 
-                    React.createElement("div", {className: "col-md-3 "}, 
-                    React.createElement("img", {src: 'images/imagine.png', alt: "imagine", className: "img-responsive"})
-                    ), 
-                    React.createElement("div", {className: "col-md-6 text-left loginform"}, 
-                    React.createElement("img", {src: 'images/logo.png', alt: "logo", className: "img-responsive"}), 
-                    React.createElement("label", {htmlFor: "username"}), 
-                    React.createElement("input", {type: "text", placeholder: "Username"}), 
-                    React.createElement("br", null), 
-                    React.createElement("input", {type: "email", placeholder: "Email"}), 
-                    React.createElement("br", null), 
-                    React.createElement("input", {type: "password", placeholder: "Password"}), 
-                    React.createElement("br", null), 
-                    React.createElement("input", {type: "submit", value: "Register"}), 
-                    React.createElement("h4", null, "Have an account? ", React.createElement(Link, {to: "login"}, "Log in"))
+        getInitialState: function() {
+          return {
+            username: null
+            , email: null
+           , password: null
+          };
+        }
+        , userChangeHandler: function(event) {
+            this.setState({username: event.target.value});
+        }
+        , emailChangeHandler: function(event) {
+            this.setState({email: event.target.value});
+        }
+
+        , passwordChangeHandler: function(event) {
+            this.setState({password: event.target.value});
+        }
+
+        , formSubmitHandler: function(event) {
+            event.preventDefault();
+            console.log(this.state);
+            $.ajax({
+              url: 'http://127.0.0.1:8000/api/v1/users/'
+              , type: 'POST'
+              , data: this.state
+              , error: function (response) {
+                    console.log(response.responseJSON);
+                }
+            }).then(function(data) {
+              sessionStorage.setItem('authToken', data.token);
+                Router.HashLocation.push("login");
+              //console.log(data.token);
+              //redirect to homepage
+            });
+        }
+    , render: function () {
+        return (
+            React.createElement("div", {className: "containerbody"}, 
+                React.createElement("div", {className: "contentlogin maincontent"}, 
+                    React.createElement("form", null, 
+                        React.createElement("div", {className: "col-md-1 "}), 
+                        React.createElement("div", {className: "col-md-3 "}
+                        ), 
+                        React.createElement("div", {className: "col-md-6 text-left loginform"}, 
+                            React.createElement("h1", null, "Pentagram"), 
+                            React.createElement("input", {type: "text", name: "username", placeholder: "Username", 
+                                   onChange: this.userChangeHandler}), " ", React.createElement("br", null), 
+                            React.createElement("input", {type: "password", name: "password", placeholder: "Password", 
+                                   onChange: this.passwordChangeHandler}), React.createElement("br", null), 
+                            React.createElement("input", {type: "email", name: " email", placeholder: "Email", 
+                                   onChange: this.emailChangeHandler}), React.createElement("br", null), 
+                            React.createElement("button", {name: "submit", onClick: this.formSubmitHandler}, "Register"), 
+                            React.createElement("br", null), 
+                            React.createElement("h4", null, "Have an account? ", React.createElement(Link, {to: "login"}, "Log in"))
+                        ), 
+                        React.createElement("div", {className: "col-md-2 "})
                     )
                 )
-            );
-        }
+            )
+        );
+    }
 
 });
 
 module.exports = registerForm;
 
-},{"react":196,"react-router":27}],204:[function(require,module,exports){
+},{"react":196,"react-router":27}],207:[function(require,module,exports){
 "use strict";
 
 var React = require('react');
@@ -32172,7 +32531,7 @@ var routes = require('./routes');
 Router.run(routes, function(Handler) {
 	React.render(React.createElement(Handler, null), document.getElementById('app'));
 });
-},{"./routes":205,"react":196,"react-router":27}],205:[function(require,module,exports){
+},{"./routes":208,"react":196,"react-router":27}],208:[function(require,module,exports){
 "use strict";
  
 var React = require('react');
@@ -32189,6 +32548,8 @@ var routes = (
     React.createElement(Route, {name: "about", handler: require('./components/about/aboutPage')}), 
     React.createElement(Route, {name: "register", handler: require('./components/registerForm')}), 
     React.createElement(Route, {name: "login", handler: require('./components/loginForm')}), 
+    React.createElement(Route, {name: "feed", handler: require('./components/feed')}), 
+    React.createElement(Route, {name: "photo/:photo_id", handler: require('./components/newpage')}), 
     React.createElement(NotFoundRoute, {handler: require('./components/notFoundPage')}), 
     "// do the redirect if route fails", 
     React.createElement(Redirect, {from: "about-us", to: "about"}), 
@@ -32197,4 +32558,4 @@ var routes = (
 );
  
 module.exports = routes;
-},{"./components/about/aboutPage":197,"./components/app":198,"./components/loginForm":200,"./components/loginPage":201,"./components/notFoundPage":202,"./components/registerForm":203,"react":196,"react-router":27}]},{},[204]);
+},{"./components/about/aboutPage":197,"./components/app":198,"./components/feed":201,"./components/loginForm":202,"./components/loginPage":203,"./components/newpage":204,"./components/notFoundPage":205,"./components/registerForm":206,"react":196,"react-router":27}]},{},[207]);

@@ -5,29 +5,64 @@ var RegisterForm = require('./registerForm');
 var Link = Router.Link;
 
 var loginForm = React.createClass({
-        render: function(){
-            return (
-                <form>
-                    <div className="col-md-3 "></div>
-                    <div className="col-md-3 ">
-                    <img src={'images/imagine.png'} alt="imagine" className="img-responsive"/>
-                    </div>
-                    <div className="col-md-6 text-left loginform">
-                    <img src={'images/logo.png'} alt="logo" className="img-responsive"/>
-                    <input type="text" placeholder="Username"/>
-                    <br />
-                    <input type="password" placeholder="Password"/>
-                    <br />
-                    <input type="submit" value="Login"/>
-                    <h4>Don't have an account? <Link to = "register">Sign up</Link> </h4>
-                    </div>
-                </form>
-
-
-
-            );
+       getInitialState: function() {
+          return {
+            username: null
+            , password: null
+          };
+        }
+        , userChangeHandler: function(event) {
+            this.setState({username: event.target.value});
         }
 
-});
+        , passwordChangeHandler: function(event) {
+            this.setState({password: event.target.value});
+        }
 
+       , formSubmitHandler: function(event) {
+            event.preventDefault();
+            console.log(this.state);
+           $.ajax({
+			url: 'http://127.0.0.1:8000/api/v1/login/'
+			, type: 'POST'
+			, data: this.state
+			// , error: function(response) {
+			// 	console.log(response.responseText.JSON);
+			// }
+			, error: function(xhr, textStatus, errorThrown) {
+					var json = JSON.parse(xhr.responseText);
+					for (var prop in json) {
+						alert(prop + "  " + json[prop]);
+					}
+			}
+		}).then(function(data) {
+			sessionStorage.setItem('authToken', data.token);
+			Router.HashLocation.push('feed');
+		});
+	}
+    , render: function () {
+        return (
+            <div className="containerbody">
+                <div className="contentlogin maincontent">
+                    <form>
+                        <fieldset>
+                            <div className="col-md-1 "></div>
+                            <div className="col-md-3 ">
+                            </div>
+                            <div className="col-md-6 text-left loginform">
+                                <h1>Pentagram</h1>
+                                <input type="text" name="username" placeholder="Username"
+                                       onChange={this.userChangeHandler}/> <br />
+                                <input type="password" name="password" placeholder="Password"
+                                       onChange={this.passwordChangeHandler}/><br />
+                                <button name="submit" onClick={this.formSubmitHandler}>Login</button>
+                                <h4>Don't have an account? <Link to="register">Sign up</Link></h4>
+                            </div>
+                        </fieldset>
+                    </form>
+                </div>
+            </div>
+        );
+    }
+});
 module.exports = loginForm;
