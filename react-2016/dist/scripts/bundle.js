@@ -32412,7 +32412,7 @@ var feed = React.createClass({displayName: "feed",
 							)
 							);
 						}), 
-						self.state.comments.length === 0 ? React.createElement("div", null, "No comments") : '', 
+						self.state.comments.length === 0 ? React.createElement("div", null, "Comment1") : '', 
 
 						sessionStorage.getItem('authToken') != null ? React.createElement("textarea", {placeholder: "add comment", className: "form-control", id: "commentContent"}) : '', 
 						sessionStorage.getItem('authToken') != null ? React.createElement("button", {className: "btn btn-default col-sm-offset-3 col-sm-9", name: "submit", onClick: self.onCommentHandler}, "Add") : ''
